@@ -54,7 +54,7 @@ $(function() {
   describe('The menu', function() {
 
     //variables available for all specs
-    const blogBody = $('body'),
+    blogBody = $('body'),
     menuIcon = $('.menu-icon-link');
 
     // a test that ensures the menu element is hidden by default
@@ -81,9 +81,6 @@ $(function() {
 
   describe('Initial Entries', function() {
 
-    //variables available for all specs
-    const feeds = $('.feed');
-
     /*  a test that ensures when the loadFeed
     * function is called and completes its work, there is at least
     * a single .entry element within the .feed container.
@@ -98,7 +95,7 @@ $(function() {
 
     //the feed container should have at least one descendant with the'.entry' class
     it('contain at least one entry', function() {
-      expect(feeds.find($('.entry')).length).toBeGreaterThan(0);
+      expect($('.feed .entry').length).toBeGreaterThan(0);
     });
 
   });
@@ -110,27 +107,18 @@ $(function() {
     * Remember, loadFeed() is asynchronous.
     */
 
-    //variables available for all specs
-    const feeds = $('.feed');
-
-    // load, store and compare the html content of the feeds 'Udacity Blog' and 'CSS Tricks'
-    beforeEach(function(done) {
-      loadFeed(0, function() {
-        feed1 = feeds.html();
+    // load and store the html content of two different feeds
+    beforeEach(function(done){
+      /* Load second feed of allFeeds array with a callback which will
+       * reload the first feed of the array */
+        loadFeed(1, function(){
+           feed2 = $('.feed').html();
+           loadFeed(0, function(){
+             feed1 = $('.feed').html();
+             done();
+          });
+        });
       });
-
-      loadFeed(1, function() {
-        feed2 = feeds.html();
-        done();
-      });
-    });
-
-    // reset the original state of the code after testing
-    afterEach(function(done) {
-      loadFeed(0, function() {
-      });
-      done();
-    });
 
     it('updates the content', function() {
       expect(feed1).not.toEqual(feed2);
